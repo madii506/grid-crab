@@ -24,9 +24,13 @@
 .hero::after{content:"";position:absolute;inset:0;background:radial-gradient(70% 60% at 30% 50%,rgba(14,15,19,.72),transparent 70%);pointer-events:none}
 .hero .wrap{position:relative;z-index:2;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px;align-items:center;width:100%}
 .hero h1{margin:0;font:900 clamp(96px,14vw,210px)/.84 var(--disp);letter-spacing:-.02em}
-.hero .lore{margin:22px 0 10px;font:900 clamp(22px,2.3vw,32px)/1.15 var(--disp);color:#fff}
-.hero .lore i{font-style:normal;color:var(--red2)}
-.hero .sub{margin:0 0 28px;color:#a8adb8;font-size:17.5px;line-height:1.6;max-width:500px}
+.hero h1{margin:0 0 34px;color:#f4f5f7;text-shadow:0 0 14px rgba(255,75,83,.55),0 0 48px rgba(224,38,47,.45),0 0 110px rgba(224,38,47,.3);animation:flick 5.2s linear infinite}
+.hero h1 span{display:inline-block}
+.hero h1 span:nth-child(3){animation:flick2 3.1s linear infinite}
+.hero h1 span:nth-child(1){animation:flick2 7.3s linear infinite -2s}
+@keyframes flick{0%,7%,9%,11.5%,47%,49.5%,51%,78%,100%{opacity:1}8%,10.5%{opacity:.25;text-shadow:none}48%{opacity:.55;text-shadow:none}50%{opacity:.15;text-shadow:none}79%{opacity:.7}}
+@keyframes flick2{0%,31%,33%,35%,62%,100%{opacity:1;color:#f4f5f7}32%,34%{opacity:.08;color:#6b2b2f;text-shadow:none}63%{opacity:.4;text-shadow:none}}
+@media (prefers-reduced-motion:reduce){.hero h1,.hero h1 span{animation:none!important}}
 .hero .acts{display:flex;gap:10px;flex-wrap:wrap}
 .links2{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.links2:empty{display:none}
 .stage{position:relative;height:min(62vh,560px);min-height:380px}
@@ -137,7 +141,6 @@
 @media (max-width:760px){
   .hero{padding-top:88px}
   .hero h1{font-size:clamp(84px,27vw,120px)}
-  .hero .sub{font-size:16px}
   .stage{height:280px}
   .walker{--w:62px!important}
   .steps,.molt{grid-template-columns:1fr}
@@ -163,9 +166,7 @@
   <canvas class="bgc" id="bgc" aria-hidden="true"></canvas>
   <div class="wrap">
     <div class="copy">
-      <h1>GRID</h1>
-      <p class="lore">It lives in your bag.<br>It <i>trades</i> your bag.</p>
-      <p class="sub">A robot hermit crab that moves into your wallet, grid-trades tokenized stocks like NVDA and AAPL and crypto like SOL, and keeps an eye on your whole portfolio. Real Jupiter limit orders. You sign every one.</p>
+      <h1 aria-label="GRID"><span>G</span><span>R</span><span>I</span><span>D</span></h1>
       <div class="acts"><a class="btn lg red" href="/pit">Enter the Pit</a><a class="btn lg ghost" href="#watch">Watch it work</a></div>
       <div class="links2" id="links2"></div>
     </div>
