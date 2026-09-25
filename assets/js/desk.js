@@ -261,7 +261,7 @@
     for (let page = 1; page <= 5; page++) {
       const j = await api(`trigger?user=${WL.W.address}&status=${status}&page=${page}`);
       if (!j.ok) { if (page === 1) throw new Error(j.msg); break; }
-      out.push(...(j.orders || [])); if (!j.hasMoreData) break;
+      out.push(...(j.orders || [])); if (!(j.hasMoreData || (j.totalPages && page < j.totalPages))) break;
     }
     return out;
   }
