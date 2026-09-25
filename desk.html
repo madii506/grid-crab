@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>GRID · Desk</title>
+<meta name="description" content="Build a grid bot on any Solana token: draw the range, backtest it on real prices, and place it as Jupiter limit orders from your own wallet.">
+<meta name="theme-color" content="#0e0f13">
+<meta property="og:image" content="/assets/img/og.png">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="/assets/img/favicon-180.png">
+<link rel="stylesheet" href="/assets/css/grid.css">
+<script>document.documentElement.classList.add('js')</script>
+<style>
+body{padding-top:66px}
+.bar{position:fixed;left:0;right:0;top:0;z-index:40;height:66px;display:flex;align-items:center;gap:14px;padding:0 18px;background:rgba(14,15,19,.9);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.bar .sp{flex:1}
+.pp{position:relative}
+.ppbtn{display:flex;align-items:center;gap:10px;height:44px;padding:0 12px 0 6px;border-radius:12px;border:1px solid var(--line2);background:var(--panel);cursor:pointer;font:800 15px/1 Inter}
+.ppbtn img,.ppbtn .ph{width:30px;height:30px;border-radius:50%;background:#000;display:grid;place-items:center;font:800 10px/1 Inter;color:var(--mute)}
+.ppbtn small{font:600 12px/1 Inter;color:var(--mute)}
+.drop{position:absolute;left:0;top:52px;width:min(380px,92vw);background:var(--panel);border:1px solid var(--line2);border-radius:16px;box-shadow:0 30px 60px rgba(0,0,0,.5);padding:10px;display:none;z-index:50}
+.drop.on{display:block}
+.drop .list{max-height:360px;overflow:auto;display:grid;gap:2px;margin-top:8px}
+.opt{display:grid;grid-template-columns:30px minmax(0,1fr) auto;gap:10px;align-items:center;padding:8px;border-radius:10px;cursor:pointer;border:0;background:transparent;text-align:left;width:100%}
+.opt:hover,.opt.on{background:#22242c}
+.opt img,.opt .ph{width:30px;height:30px;border-radius:50%;background:#000;display:grid;place-items:center;font:800 10px/1 Inter;color:var(--mute)}
+.opt b{display:block;font:800 14px/1.2 Inter}.opt small{display:block;color:var(--mute);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.opt .r{text-align:right;font:600 12.5px/1.3 var(--mono)}
+.dsec{font:700 10.5px/1 var(--mono);letter-spacing:1px;color:var(--dim);text-transform:uppercase;padding:10px 8px 4px}
+.px{display:flex;align-items:baseline;gap:10px}
+.px b{font:700 20px/1 var(--mono)}.px span{font:700 13px/1 var(--mono)}
+.tf{display:flex;gap:3px;background:var(--panel);border:1px solid var(--line2);border-radius:12px;padding:3px}
+.tf button{height:36px;min-width:44px;border:0;border-radius:9px;background:transparent;color:var(--mute);font:700 13px/1 var(--mono);cursor:pointer}
+.tf button.on{background:#f2f3f6;color:#0e0f13}
+.wbtn2 .dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green)}
+
+.desk{display:grid;grid-template-columns:minmax(0,1fr) 410px;grid-template-areas:'c s' 'p s';gap:14px;padding:14px;align-items:start}
+.chartp{grid-area:c}.plan{grid-area:p}.side{grid-area:s}
+.chartp{padding:12px;position:relative}
+.chartp .ch{height:min(62vh,600px);min-height:380px}
+.chartp canvas{width:100%;height:100%;display:block;border-radius:12px;background:var(--bg)}
+.chartp .tip{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;padding:4px 4px 10px}
+.chartp .tip .l{font:700 12px/1.3 var(--mono);color:var(--mute)}
+.chartp .tip .l b{color:#fff}
+.plan{padding:6px 12px 12px}
+.plan table{width:100%;border-collapse:collapse;font:600 13px/1 var(--mono)}
+.plan th{font:700 10.5px/1 var(--mono);letter-spacing:.8px;color:var(--dim);text-transform:uppercase;text-align:left;padding:12px 8px}
+.plan td{padding:9px 8px;border-top:1px solid var(--line)}
+.plan td.r,.plan th.r{text-align:right}
+.sd{font:800 10px/1 Inter;letter-spacing:.6px;text-transform:uppercase;padding:5px 7px;border-radius:6px;display:inline-block}
+.sd.buy{background:var(--greenbg);color:var(--green)}.sd.sell{background:var(--redbg);color:var(--red2)}.sd.mid{background:#22242c;color:var(--mute)}
+.plan .tw{max-height:420px;overflow:auto}
+.plan h3,.side h3{margin:10px 4px 6px;font:900 18px/1.2 var(--disp)}
+
+.side{display:grid;gap:14px;position:sticky;top:80px}
+.crab{padding:14px;display:grid;grid-template-columns:96px minmax(0,1fr);gap:14px;align-items:center}
+.crab img{width:96px;filter:drop-shadow(0 8px 10px rgba(0,0,0,.5))}
+.crab .nm{display:flex;align-items:center;gap:8px}
+.crab .nm input{background:transparent;border:0;border-bottom:1px dashed transparent;font:900 20px/1.2 var(--disp);color:#fff;width:100%;min-width:0;padding:0;outline:none}
+.crab .nm input:focus{border-bottom-color:var(--line2)}
+.crab .st{font:700 12px/1.4 var(--mono);color:var(--red2);margin:4px 0 8px}
+.crab .xp{height:8px;background:#101116;border-radius:99px;overflow:hidden;border:1px solid var(--line)}
+.crab .xp i{display:block;height:100%;background:linear-gradient(90deg,var(--red),var(--red2));border-radius:99px;transition:width .6s}
+.crab .nx{font-size:12.5px;color:var(--mute);margin-top:6px}
+.tabs{display:flex;gap:3px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:4px}
+.tabs button{flex:1;height:40px;border:0;border-radius:10px;background:transparent;color:var(--mute);font:800 14px/1 Inter;cursor:pointer}
+.tabs button.on{background:#f2f3f6;color:#0e0f13}
+.tabs button .n{display:inline-grid;place-items:center;min-width:20px;height:20px;padding:0 5px;border-radius:99px;background:var(--red);color:#fff;font:800 11px/1 Inter;margin-left:6px}
+.pane{padding:16px;display:grid;gap:14px}
+.quick{display:flex;gap:6px;flex-wrap:wrap}
+.quick button{height:32px;padding:0 11px;border-radius:9px;border:1px solid var(--line2);background:#101116;font:700 12.5px/1 var(--mono);cursor:pointer;color:#c7cad1}
+.quick button:hover{border-color:#50545f}
+.lab{display:flex;justify-content:space-between;align-items:baseline}
+.lab b{font:700 14px/1 var(--mono)}
+.amt{position:relative}.amt .max{position:absolute;right:6px;top:6px;height:34px}
+.big{height:56px!important;font-size:16px!important;width:100%}
+.prog{display:grid;gap:6px}
+.pr{display:grid;grid-template-columns:22px minmax(0,1fr) auto;gap:10px;align-items:center;font-size:13.5px}
+.pr i{width:18px;height:18px;border-radius:50%;border:2px solid var(--line2);display:grid;place-items:center}
+.pr.do i{border-color:#fff;border-right-color:transparent;animation:sp .7s linear infinite}
+.pr.ok i{border-color:var(--green);background:var(--green)}
+.pr.no i{border-color:var(--red2);background:var(--red2)}
+.pr span{color:var(--mute);font:600 12px/1 var(--mono)}
+.ord{display:grid;gap:6px;max-height:380px;overflow:auto}
+.orow{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px;align-items:center;padding:10px;border-radius:12px;background:#111217;border:1px solid var(--line)}
+.orow .m{font:600 12.5px/1.35 var(--mono)}
+.orow .m small{display:block;color:var(--dim)}
+.orow .x{height:30px;padding:0 10px;border-radius:8px;border:1px solid var(--line2);background:transparent;font:700 12px/1 Inter;cursor:pointer;color:#c7cad1}
+.orow .x:hover{border-color:var(--red2);color:var(--red2)}
+.empty{text-align:center;color:var(--mute);padding:26px 10px;font-size:14px}
+.empty img{width:110px;display:block;margin:0 auto 10px;opacity:.9}
+.sub2{display:flex;gap:6px}
+.sub2 button{height:32px;padding:0 12px;border-radius:9px;border:1px solid var(--line2);background:transparent;font:700 12.5px/1 Inter;color:var(--mute);cursor:pointer}
+.sub2 button.on{background:#22242c;color:#fff}
+@media (max-width:1100px){.desk{grid-template-columns:1fr;grid-template-areas:'c' 's' 'p'}.side{position:static}}
+@media (max-width:760px){
+  .bar{gap:8px;padding:0 10px}.bar .logo b{display:none}.bar .px span{display:none}.px b{font-size:16px}
+  .tf{display:none}.desk{padding:10px;gap:10px}.chartp .ch{height:420px;min-height:0}
+  .ppbtn small{display:none}
+  .plan table{font-size:12px}
+}
+</style>
+</head>
+<body>
+<div class="bar">
+  <a class="logo" href="/"><img src="/assets/img/favicon-64.png" alt=""><b>GRID</b></a>
+  <div class="pp">
+    <button class="ppbtn" id="ppBtn" type="button"><span class="ph">··</span><span id="ppSym">Loading</span><small id="ppName"></small><span aria-hidden="true">▾</span></button>
+    <div class="drop" id="drop"><input class="in" id="search" placeholder="Search a token or paste a mint" autocomplete="off"><div class="list" id="list"></div></div>
+  </div>
+  <div class="px"><b id="pxNow">—</b><span id="pxChg"></span></div>
+  <div class="sp"></div>
+  <div class="tf" id="tf"><button data-t="15m">15m</button><button data-t="1h" class="on">1h</button><button data-t="6h">6h</button><button data-t="1d">1d</button></div>
+  <button class="btn sm white wbtn2" id="walletBtn" type="button">Connect wallet</button>
+</div>
+
+<div class="desk">
+    <div class="panel chartp">
+      <div class="tip"><span class="l" id="chartNote">Drag <b>TOP</b> and <b>LOW</b> to set your range. Every dashed line is an order.</span><span class="l" id="srcNote"></span></div>
+      <div class="ch"><canvas id="chart"></canvas></div>
+    </div>
+    <div class="panel plan">
+      <h3>The orders</h3>
+      <div class="tw"><table><thead><tr><th>Line</th><th>Side</th><th class="r">Price</th><th class="r">Amount</th><th class="r">Value</th></tr></thead><tbody id="planBody"></tbody></table></div>
+    </div>
+
+  <aside class="side">
+    <div class="panel crab">
+      <img src="/assets/img/crab-front.png" alt="Your crab">
+      <div>
+        <div class="nm"><input id="crabName" maxlength="20" aria-label="Your crab's name"></div>
+        <div class="st" id="crabStage">HATCHLING · COIN PURSE</div>
+        <div class="xp"><i id="crabXp" style="width:0"></i></div>
+        <div class="nx" id="crabNext">Connect a wallet to start growing.</div>
+      </div>
+    </div>
+    <div class="tabs" id="tabs"><button class="on" data-p="build">Build</button><button data-p="test">Backtest</button><button data-p="mine">My grid<span class="n hide" id="mineN">0</span></button></div>
+
+    <div class="panel pane" id="p-build">
+      <div class="row2">
+        <label class="field"><span>Low</span><input class="in mono" id="lo" inputmode="decimal"></label>
+        <label class="field"><span>Top</span><input class="in mono" id="hi" inputmode="decimal"></label>
+      </div>
+      <div class="quick" id="quick"><button data-q="5">±5%</button><button data-q="10">±10%</button><button data-q="20">±20%</button><button data-q="fit">Fit the chart</button></div>
+      <div class="field"><div class="lab"><span class="field"><span>Lines</span></span><b id="nv">10</b></div><input type="range" id="n" min="2" max="6" step="1" value="6"><small class="mute" id="nCap"></small></div>
+      <div class="field"><span>Spacing</span><div class="seg" id="mode"><button class="on" data-m="arith">Even $</button><button data-m="geo">Even %</button></div></div>
+      <label class="field"><span>Amount (USD)</span><div class="amt"><input class="in mono" id="amt" inputmode="decimal" value="200"><button class="btn sm max" id="maxBtn" type="button" hidden>Max</button></div></label>
+      <div class="stats" id="sum"></div>
+      <div id="warn"></div>
+      <button class="btn lg red big" id="deploy" type="button">Connect wallet to deploy</button>
+      <div class="prog" id="prog"></div>
+      <p class="fine">Each line becomes a Jupiter limit order in your own wallet. Jupiter takes 0.1% per fill and needs $5 or more per order. Keep ~0.02 SOL per order for network fees and order rent (returned when an order closes).</p>
+    </div>
+
+    <div class="panel pane hide" id="p-test">
+      <div class="stats" id="bt"></div>
+      <div id="btNote" class="fine"></div>
+      <button class="btn white" id="replay" type="button">Replay on the chart</button>
+    </div>
+
+    <div class="panel pane hide" id="p-mine">
+      <div class="sub2" id="mineTabs"><button class="on" data-s="active">Open orders</button><button data-s="history">Filled &amp; closed</button><span class="sp" style="flex:1"></span><button id="refresh" type="button">Refresh</button></div>
+      <div id="rearm"></div>
+      <div class="ord" id="orders"><div class="empty"><img src="/assets/img/crab-q.png" alt="">Connect a wallet to see your orders.</div></div>
+      <button class="btn" id="cancelAll" type="button" hidden>Cancel every open order</button>
+    </div>
+  </aside>
+</div>
+
+<script src="/assets/js/common.js"></script>
+<script src="/assets/js/engine.js"></script>
+<script src="/assets/js/chart.js"></script>
+<script src="/assets/js/wallet.js"></script>
+<script src="/assets/js/desk.js"></script>
+</body>
+</html>

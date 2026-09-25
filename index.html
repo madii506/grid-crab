@@ -1,0 +1,287 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>GRID</title>
+<meta name="description" content="It lives in your bag. It trades your bag. Build a grid bot on Solana: it buys every dip and sells every pop with real limit orders you sign.">
+<meta name="theme-color" content="#0e0f13">
+<meta property="og:title" content="GRID">
+<meta property="og:description" content="It lives in your bag. It trades your bag.">
+<meta property="og:image" content="/assets/img/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicon-32.png">
+<link rel="apple-touch-icon" href="/assets/img/favicon-180.png">
+<link rel="preload" href="/assets/fonts/archivo-black.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/img/crab-hero.png" as="image">
+<link rel="stylesheet" href="/assets/css/grid.css">
+<script>document.documentElement.classList.add('js')</script>
+<style>
+/* hero */
+.hero{position:relative;min-height:100vh;min-height:100svh;display:flex;align-items:center;overflow:hidden;padding:96px 0 150px}
+.hero canvas.bgc{position:absolute;inset:0;width:100%;height:100%;opacity:.9}
+.hero::after{content:"";position:absolute;inset:0;background:radial-gradient(70% 60% at 30% 50%,rgba(14,15,19,.72),transparent 70%);pointer-events:none}
+.hero .wrap{position:relative;z-index:2;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px;align-items:center;width:100%}
+.hero h1{margin:0;font:900 clamp(96px,14vw,210px)/.84 var(--disp);letter-spacing:-.02em}
+.hero .lore{margin:22px 0 10px;font:900 clamp(22px,2.3vw,32px)/1.15 var(--disp);color:#fff}
+.hero .lore i{font-style:normal;color:var(--red2)}
+.hero .sub{margin:0 0 28px;color:#a8adb8;font-size:17.5px;line-height:1.6;max-width:500px}
+.hero .acts{display:flex;gap:10px;flex-wrap:wrap}
+.links2{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.links2:empty{display:none}
+.stage{position:relative;height:min(62vh,560px);min-height:380px}
+.stage .big{position:absolute;right:4%;bottom:18%;width:min(88%,580px);filter:drop-shadow(0 30px 40px rgba(0,0,0,.5));animation:bob 4s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(-10px)}}
+.stage .floor{position:absolute;left:-10%;right:-10%;bottom:12%;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.16),transparent)}
+.band2{position:absolute;left:0;right:0;bottom:44px;height:96px;z-index:2;pointer-events:none}
+.band2 .fl{position:absolute;left:0;right:0;bottom:6px;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.12) 20%,rgba(255,255,255,.12) 80%,transparent)}
+.walker{position:absolute;bottom:6px;width:var(--w,86px);animation:walk var(--t,14s) ease-in-out infinite;animation-delay:var(--d,0s);filter:drop-shadow(0 8px 10px rgba(0,0,0,.45))}
+.walker.back{opacity:.8;filter:drop-shadow(0 8px 10px rgba(0,0,0,.45)) brightness(.85)}
+@keyframes walk{0%{transform:translateX(0) scaleX(1)}46%{transform:translateX(var(--dx,160px)) scaleX(1)}50%{transform:translateX(var(--dx,160px)) scaleX(-1)}96%{transform:translateX(0) scaleX(-1)}100%{transform:translateX(0) scaleX(1)}}
+.hero .live{position:absolute;left:28px;bottom:22px;z-index:3;font:700 11px/1 var(--mono);letter-spacing:.8px;color:var(--dim);text-transform:uppercase}
+
+/* lore */
+.lore2{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:56px;align-items:center}
+.lore2 .story p{font-size:18px;line-height:1.7;color:#c3c7cf;margin:0 0 18px}
+.lore2 .story p b{color:#fff}
+.facts{display:grid;gap:12px;margin-top:26px}
+.fact{display:grid;grid-template-columns:52px minmax(0,1fr);gap:16px;align-items:center;padding:16px 18px}
+.fact .n{width:52px;height:52px;border-radius:14px;background:var(--redbg);color:var(--red2);display:grid;place-items:center;font:900 20px/1 var(--disp)}
+.fact h3{margin:0 0 3px;font:800 17px/1.25 Inter}
+.fact p{margin:0;color:var(--mute);font-size:14.5px}
+.lore2 .pic{position:relative;display:grid;place-items:center;min-height:420px}
+.lore2 .pic img{width:min(100%,460px);filter:drop-shadow(0 30px 40px rgba(0,0,0,.5))}
+.lore2 .pic .ring{position:absolute;inset:8% 6%;border-radius:50%;border:1px dashed rgba(255,255,255,.08)}
+
+/* watch */
+.watch{padding:18px}
+.watch .top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.pairs{display:flex;gap:6px;flex-wrap:wrap}
+.pairs button{display:inline-flex;align-items:center;gap:7px;height:36px;padding:0 13px 0 6px;border-radius:999px;border:1px solid var(--line2);background:#111217;font:700 13px/1 Inter;cursor:pointer;color:#c7cad1}
+.pairs button img{width:24px;height:24px;border-radius:50%}
+.pairs button.on{background:#f2f3f6;color:#0e0f13;border-color:#f2f3f6}
+.watch canvas{width:100%;height:380px;display:block;border-radius:12px;background:#0e0f13}
+.wstats{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:14px;overflow:hidden;margin-top:12px}
+.wstats .stat b{font-size:19px}
+.watch .ctl{display:flex;gap:8px;align-items:center}
+.watch .note{margin-top:10px}
+
+/* how */
+.steps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.step{padding:22px;position:relative;overflow:hidden}
+.step .no{font:700 12px/1 var(--mono);color:var(--dim);letter-spacing:1px}
+.step h3{margin:30px 0 8px;font:900 22px/1.1 var(--disp)}
+.step p{margin:0;color:var(--mute);font-size:14.5px}
+.step .ic{position:absolute;right:18px;top:18px;width:44px;height:44px;border-radius:12px;background:#111217;border:1px solid var(--line2);display:grid;place-items:center}
+.step .ic svg{width:22px;height:22px}
+
+/* molt */
+.molt{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;align-items:end}
+.mk{padding:18px 16px 18px;display:flex;flex-direction:column;position:relative}
+.mk .img{height:132px;display:grid;place-items:end center;margin-bottom:14px}
+.mk .img img{filter:drop-shadow(0 10px 14px rgba(0,0,0,.5));width:auto;max-width:100%}
+.mk .lv{font:700 11px/1 var(--mono);letter-spacing:1px;color:var(--dim)}
+.mk h3{margin:8px 0 4px;font:900 22px/1.05 var(--disp)}
+.mk .bag{font:700 12px/1 var(--mono);color:var(--red2);margin-bottom:10px}
+.mk p{margin:0;color:var(--mute);font-size:13.5px}
+.mk .req{margin-top:auto;padding-top:14px;display:flex;justify-content:space-between;gap:8px;font:700 12px/1.3 var(--mono);color:#c7cad1}
+.mk.king{border-color:rgba(236,58,64,.5);background:linear-gradient(180deg,rgba(236,58,64,.1),var(--panel) 60%)}
+
+/* try */
+.try{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:18px}
+.try .form{padding:22px;display:grid;gap:16px;align-content:start}
+.try .res{padding:22px;display:grid;gap:14px;align-content:start}
+.ladder{display:grid;gap:4px;max-height:260px;overflow:auto;padding-right:4px}
+.lrow{display:grid;grid-template-columns:54px minmax(0,1fr) auto;gap:10px;align-items:center;height:30px;padding:0 10px;border-radius:8px;background:#111217;font:600 13px/1 var(--mono)}
+.lrow .sd{font:800 10px/1 Inter;letter-spacing:.6px;text-transform:uppercase;padding:5px 7px;border-radius:6px;text-align:center}
+.lrow .sd.buy{background:var(--greenbg);color:var(--green)}.lrow .sd.sell{background:var(--redbg);color:var(--red2)}.lrow .sd.mid{background:#22242c;color:var(--mute)}
+.lrow em{font-style:normal;color:var(--mute)}
+.rng{display:flex;justify-content:space-between;font:700 13px/1 var(--mono);color:var(--mute)}
+
+/* keys */
+.keys{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.key{padding:24px}
+.key .ic{width:48px;height:48px;border-radius:13px;background:var(--greenbg);color:var(--green);display:grid;place-items:center;margin-bottom:18px}
+.key .ic svg{width:22px;height:22px}
+.key h3{margin:0 0 8px;font:800 19px/1.25 Inter}
+.key p{margin:0;color:var(--mute);font-size:14.5px}
+
+/* faq */
+.faqw{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:56px;align-items:start}
+.faq{display:grid;gap:10px}
+.faq details{background:var(--panel);border:1px solid var(--line);border-radius:16px;transition:border-color .2s}
+.faq details[open]{border-color:#3d404b}
+.faq summary{cursor:pointer;list-style:none;padding:19px 56px 19px 20px;font:700 16px/1.35 Inter;position:relative}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"+";position:absolute;right:20px;top:50%;transform:translateY(-50%);font:600 22px/1 Inter;color:var(--red2);transition:transform .2s}
+.faq details[open] summary::after{transform:translateY(-50%) rotate(45deg)}
+.faq .a{padding:0 20px 20px;color:#a8adb8;font-size:15px;line-height:1.65}
+.end{height:120px}
+@media (max-width:1060px){
+  .hero .wrap{grid-template-columns:1fr}
+  .stage{height:360px;min-height:0}
+  .lore2,.try,.faqw{grid-template-columns:1fr;gap:28px}
+  .steps{grid-template-columns:1fr 1fr}
+  .molt{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .keys{grid-template-columns:1fr}
+  .wstats{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+@media (max-width:760px){
+  .hero{padding-top:88px}
+  .hero h1{font-size:clamp(84px,27vw,120px)}
+  .hero .sub{font-size:16px}
+  .stage{height:280px}
+  .walker{--w:62px!important}
+  .steps,.molt{grid-template-columns:1fr}
+  .mk .img{height:110px}
+  .mk{min-height:0!important}
+  .stat b{white-space:normal}
+  .band2{bottom:36px;height:70px}
+  .watch{padding:12px}.watch canvas{height:300px}
+  .wstats{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .hero .live{left:16px}
+  .lore2 .pic{min-height:0}
+}
+</style>
+</head>
+<body>
+<nav class="nav">
+  <a class="logo" href="/"><img src="/assets/img/favicon-64.png" alt=""><b>GRID</b></a>
+  <div class="links"><a href="#lore">Lore</a><a href="#watch">Watch it work</a><a href="#molt">The molt</a><a href="#try">Try a grid</a><a href="#faq">FAQ</a></div>
+  <div class="right"><span id="navx"></span><a class="btn sm red" href="/desk">Open the desk</a></div>
+</nav>
+
+<header class="hero">
+  <canvas class="bgc" id="bgc" aria-hidden="true"></canvas>
+  <div class="wrap">
+    <div class="copy">
+      <h1>GRID</h1>
+      <p class="lore">It lives in your bag.<br>It <i>trades</i> your bag.</p>
+      <p class="sub">Hatch a grid crab, draw a price range, pick your lines. It buys every dip and sells every pop on Solana, with real limit orders you sign.</p>
+      <div class="acts"><a class="btn lg red" href="/desk">Hatch your crab</a><a class="btn lg ghost" href="#watch">Watch it work</a></div>
+      <div class="links2" id="links2"></div>
+    </div>
+    <div class="stage" aria-hidden="true">
+      <div class="floor"></div>
+      <img class="big" src="/assets/img/crab-hero.png" alt="">
+    </div>
+  </div>
+  <div class="band2" aria-hidden="true"><i class="fl"></i>
+    <img class="walker" src="/assets/img/crab-sr.png" alt="" style="left:6%;--w:92px;--dx:260px;--t:14s">
+    <img class="walker" src="/assets/img/crab-sl.png" alt="" style="left:62%;--w:72px;--dx:-220px;--t:11s;--d:-5s">
+    <img class="walker" src="/assets/img/crab-sr.png" alt="" style="left:40%;--w:56px;--dx:140px;--t:9s;--d:-2s;opacity:.75">
+  </div>
+  <div class="live" id="bgnote"></div>
+</header>
+
+<div class="tape" aria-label="Live prices"><div class="run" id="tape"></div></div>
+
+<main>
+  <section class="s" id="lore">
+    <div class="wrap lore2">
+      <div>
+        <div class="head reveal"><span class="ey">The lore</span><h2>Crab season never ends.</h2></div>
+        <div class="story reveal">
+          <p>Most of the time the market goes <b>sideways</b>. Traders hate it. They call it a crab market.</p>
+          <p>A grid crab lives for it. It moves into your bag like a hermit crab moves into a shell, strings lines across the price, and <b>pinches a little profit every time the price crosses one</b>. Down through a line, it buys. Back up through the next, it sells.</p>
+          <p>Every win makes it grow. When it outgrows its bag, it <b>molts</b> into a bigger one and works more lines.</p>
+        </div>
+        <div class="facts">
+          <div class="fact panel reveal"><span class="n">1</span><div><h3>It lives in your bag</h3><p>Your crab works from your own wallet. It never takes custody of anything.</p></div></div>
+          <div class="fact panel reveal"><span class="n">2</span><div><h3>It walks sideways</h3><p>Chop, ranges, boring weeks: that's where a grid earns. Trends are for HODLers.</p></div></div>
+          <div class="fact panel reveal"><span class="n">3</span><div><h3>It molts when it wins</h3><p>Filled orders grow it from Hatchling to King Crab, and every molt unlocks more lines.</p></div></div>
+        </div>
+      </div>
+      <div class="pic reveal"><span class="ring"></span><img src="/assets/img/crab-wave.png" alt="A grid crab waving from its red backpack"></div>
+    </div>
+  </section>
+
+  <section class="s" id="watch">
+    <div class="wrap">
+      <div class="head reveal"><span class="ey">Watch it work</span><h2>A grid on real prices.</h2><p>Pick a token. The grid below replays the last few days of its real price, candle by candle, and fills every line the price crosses.</p></div>
+      <div class="panel watch reveal">
+        <div class="top"><div class="pairs" id="wPairs"></div><div class="ctl"><button class="btn sm" id="wPlay">Pause</button><a class="btn sm white" id="wOpen" href="/desk">Open in the desk →</a></div></div>
+        <canvas id="wChart"></canvas>
+        <div class="wstats" id="wStats"></div>
+        <p class="fine note" id="wNote"></p>
+      </div>
+    </div>
+  </section>
+
+  <section class="s" id="how">
+    <div class="wrap">
+      <div class="head reveal"><span class="ey">How it works</span><h2>Four moves. Then it's on its own lines.</h2></div>
+      <div class="steps">
+        <div class="step panel reveal"><span class="no">01</span><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="7"/><path d="M9 4l1.5 2.5M15 4l-1.5 2.5"/></svg></span><h3>Hatch it</h3><p>Name your crab and connect Phantom, Backpack or Solflare.</p></div>
+        <div class="step panel reveal"><span class="no">02</span><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M3 6h18M3 18h18"/><path d="M12 9v6M9 12h6" opacity=".6"/></svg></span><h3>Draw the range</h3><p>Pick a token and drag the top and bottom of the range on a live chart.</p></div>
+        <div class="step panel reveal"><span class="no">03</span><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M3 5h18M3 9.5h18M3 14h18M3 18.5h18"/></svg></span><h3>Pick the lines</h3><p>More lines, smaller wins, more often. It backtests your grid before you spend a cent.</p></div>
+        <div class="step panel reveal"><span class="no">04</span><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span><h3>Sign the orders</h3><p>Every line becomes a real Jupiter limit order from your wallet. One signature for the whole grid.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="s" id="molt">
+    <div class="wrap">
+      <div class="head reveal"><span class="ey">The molt</span><h2>Starts in a coin purse. Ends in the big red bag.</h2><p>Your crab grows with every filled order on your wallet, read live from Jupiter. Each molt unlocks more lines.</p></div>
+      <div class="molt" id="moltRow"></div>
+    </div>
+  </section>
+
+  <section class="s" id="try">
+    <div class="wrap">
+      <div class="head reveal"><span class="ey">Try a grid</span><h2>Build one right here.</h2><p>Live prices. Real Jupiter rules: at least $5 per order, 0.1% fee per fill.</p></div>
+      <div class="try">
+        <div class="form panel reveal">
+          <div class="field"><span>Token</span><div class="pairs" id="tPairs"></div></div>
+          <div class="field"><span>Range around today's price</span><input type="range" id="tRange" min="2" max="40" step="1" value="12"><div class="rng"><span id="tLo">—</span><span id="tPct">±12%</span><span id="tHi">—</span></div></div>
+          <div class="field"><span>Lines: <b id="tNv">10</b></span><input type="range" id="tN" min="2" max="50" step="1" value="10"></div>
+          <div class="row2">
+            <label class="field"><span>Amount (USD)</span><input class="in mono" id="tAmt" inputmode="decimal" value="500"></label>
+            <div class="field"><span>Spacing</span><div class="seg" id="tMode"><button class="on" data-m="arith">Even $</button><button data-m="geo">Even %</button></div></div>
+          </div>
+          <a class="btn lg white" id="tGo" href="/desk">Open this grid in the desk →</a>
+        </div>
+        <div class="res panel reveal">
+          <div class="stats" id="tStats"></div>
+          <div id="tWarn"></div>
+          <div class="ladder" id="tLadder"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="s" id="keys">
+    <div class="wrap">
+      <div class="head reveal"><span class="ey">Keys stay yours</span><h2>The crab can't run off with the bag.</h2></div>
+      <div class="keys">
+        <div class="key panel reveal"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></span><h3>Real limit orders</h3><p>Every line is a Jupiter limit order held on-chain for your wallet. GRID doesn't hold funds, and there's no GRID contract in between.</p></div>
+        <div class="key panel reveal"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span><h3>You sign everything</h3><p>Your wallet shows every order before it's placed. Nothing moves without your signature.</p></div>
+        <div class="key panel reveal"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></span><h3>Cancel any time</h3><p>Pull one line or the whole grid from the desk. Unfilled funds go straight back to your wallet.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="s" id="faq">
+    <div class="wrap faqw">
+      <div class="head reveal"><span class="ey">FAQ</span><h2>Questions from the pit.</h2></div>
+      <div class="faq">
+        <details><summary>What is a grid bot?</summary><div class="a">A set of buy orders below the price and sell orders above it, evenly spread across a range. When the price drops through a line, that line buys. When it rises through the next line up, it sells. Each buy-then-sell is a round trip, and each round trip keeps the gap between the two lines as profit, minus fees.</div></details>
+        <details><summary>When does a grid make money, and when doesn't it?</summary><div class="a">It earns in choppy, sideways markets, where the price keeps crossing lines. In a strong trend it can do worse than just holding: if the price falls below your range you end up holding the token, and if it rises above it you've sold everything and miss the rest of the move. The desk backtests your grid on real prices so you can see both cases.</div></details>
+        <details><summary>Where do my orders live?</summary><div class="a">On Jupiter, Solana's main trading router, as limit orders owned by your wallet. Jupiter's keepers fill them when the price reaches your line. You can see and cancel them in the desk, or on Jupiter directly.</div></details>
+        <details><summary>What does it cost?</summary><div class="a">Jupiter charges 0.1% per filled limit order on most pairs, plus normal Solana network fees. Each order needs to be worth at least $5. GRID adds nothing on top.</div></details>
+        <details><summary>Does my crab re-place orders after a fill?</summary><div class="a">Your keys stay in your wallet, so every new order needs your signature. When a line fills, the desk shows the matching order one line over and lets you re-arm it in one click. That keeps the grid running without handing anyone your keys.</div></details>
+        <details><summary>How does my crab molt?</summary><div class="a">It counts filled limit orders on your connected wallet, read from Jupiter: 2 fills makes a Scuttler, 6 a Pincher, 16 a Shellback, 40 a King Crab. Each stage unlocks more lines per grid, from 6 up to 50.</div></details>
+        <details><summary>Is GRID part of Backpack or Jupiter?</summary><div class="a">No. GRID is an independent project. It works with the Backpack, Phantom and Solflare wallets and places orders through Jupiter's public API.</div></details>
+        <details><summary>Is this financial advice?</summary><div class="a">No. Backtests replay the past, and the past doesn't promise anything. Crypto and tokenized stocks can drop fast. Only put in what you can afford to lose.</div></details>
+      </div>
+    </div>
+  </section>
+  <div class="end"></div>
+</main>
+
+<script src="/assets/js/common.js"></script>
+<script src="/assets/js/engine.js"></script>
+<script src="/assets/js/chart.js"></script>
+<script src="/assets/js/home.js"></script>
+</body>
+</html>
