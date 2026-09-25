@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>GRID</title>
-<meta name="description" content="It lives in your bag. It trades your bag. Build a grid bot on Solana: it buys every dip and sells every pop with real limit orders you sign.">
+<meta name="description" content="It lives in your bag. It trades your bag. A grid crab that trades tokenized stocks and crypto on Solana and minds your whole portfolio, with real limit orders you sign.">
 <meta name="theme-color" content="#0e0f13">
 <meta property="og:title" content="GRID">
 <meta property="og:description" content="It lives in your bag. It trades your bag.">
@@ -49,6 +49,14 @@
 .fact .n{width:52px;height:52px;border-radius:14px;background:var(--redbg);color:var(--red2);display:grid;place-items:center;font:900 20px/1 var(--disp)}
 .fact h3{margin:0 0 3px;font:800 17px/1.25 Inter}
 .fact p{margin:0;color:var(--mute);font-size:14.5px}
+.pitcard{position:relative;display:block;overflow:hidden;border-radius:22px;text-decoration:none}
+.pitcard img{display:block;width:100%;aspect-ratio:2400/1000;object-fit:cover;transition:transform .6s}
+.pitcard:hover img{transform:scale(1.02)}
+.pitcard .btn{position:absolute;left:50%;bottom:22px;transform:translateX(-50%);box-shadow:0 14px 30px rgba(0,0,0,.45)}
+.rooms{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px;margin-top:12px}
+.rooms div{padding:14px;border-radius:14px;background:var(--panel);border:1px solid var(--line)}
+.rooms b{display:block;font:900 15px/1.1 var(--disp)}.rooms span{display:block;margin-top:5px;color:var(--mute);font-size:12.5px;line-height:1.35}
+@media (max-width:980px){.rooms{grid-template-columns:repeat(2,minmax(0,1fr))}.pitcard img{aspect-ratio:16/10;object-position:40% 50%}.pitcard .btn{bottom:14px}}
 .lore2 .pic{position:relative;display:grid;place-items:center;min-height:420px}
 .lore2 .pic img{width:min(100%,460px);filter:drop-shadow(0 30px 40px rgba(0,0,0,.5))}
 .lore2 .pic .ring{position:absolute;inset:8% 6%;border-radius:50%;border:1px dashed rgba(255,255,255,.08)}
@@ -147,8 +155,8 @@
 <body>
 <nav class="nav">
   <a class="logo" href="/"><img src="/assets/img/favicon-64.png" alt=""><b>GRID</b></a>
-  <div class="links"><a href="#lore">Lore</a><a href="#watch">Watch it work</a><a href="#molt">The molt</a><a href="#try">Try a grid</a><a href="#faq">FAQ</a></div>
-  <div class="right"><span id="navx"></span><a class="btn sm red" href="/desk">Open the desk</a></div>
+  <div class="links"><a href="/pit">The Pit</a><a href="#lore">Lore</a><a href="#watch">Watch it work</a><a href="#molt">The molt</a><a href="#try">Try a grid</a><a href="#faq">FAQ</a></div>
+  <div class="right"><span id="navx"></span><a class="btn sm red" href="/pit">Enter the Pit</a></div>
 </nav>
 
 <header class="hero">
@@ -157,8 +165,8 @@
     <div class="copy">
       <h1>GRID</h1>
       <p class="lore">It lives in your bag.<br>It <i>trades</i> your bag.</p>
-      <p class="sub">Hatch a grid crab, draw a price range, pick your lines. It buys every dip and sells every pop on Solana, with real limit orders you sign.</p>
-      <div class="acts"><a class="btn lg red" href="/desk">Hatch your crab</a><a class="btn lg ghost" href="#watch">Watch it work</a></div>
+      <p class="sub">A robot hermit crab that moves into your wallet, grid-trades tokenized stocks like NVDA and AAPL and crypto like SOL, and keeps an eye on your whole portfolio. Real Jupiter limit orders. You sign every one.</p>
+      <div class="acts"><a class="btn lg red" href="/pit">Enter the Pit</a><a class="btn lg ghost" href="#watch">Watch it work</a></div>
       <div class="links2" id="links2"></div>
     </div>
     <div class="stage" aria-hidden="true">
@@ -182,17 +190,28 @@
       <div>
         <div class="head reveal"><span class="ey">The lore</span><h2>Crab season never ends.</h2></div>
         <div class="story reveal">
-          <p>Most of the time the market goes <b>sideways</b>. Traders hate it. They call it a crab market.</p>
-          <p>A grid crab lives for it. It moves into your bag like a hermit crab moves into a shell, strings lines across the price, and <b>pinches a little profit every time the price crosses one</b>. Down through a line, it buys. Back up through the next, it sells.</p>
-          <p>Every win makes it grow. When it outgrows its bag, it <b>molts</b> into a bigger one and works more lines.</p>
+          <p>In January, <b>Backpack</b> put grid bots on its exchange. Those bots live on the exchange. This one lives in <b>your bag</b>: a robot hermit crab that moved into a red backpack instead of a shell, and into your wallet with it.</p>
+          <p>Most of the time markets go <b>sideways</b>. Stocks drift between earnings, crypto chops between pumps. Traders call it a crab market. A grid crab lives for it: it strings lines across the price and <b>pinches a little every time the price crosses one</b>. Down through a line, it buys. Back up through the next, it sells.</p>
+          <p>It works <b>tokenized stocks</b> like NVDAx and AAPLx and crypto like SOL around the clock, counts your <b>whole portfolio</b> in the Stash, and every time it wins it grows. When it outgrows its bag, it <b>molts</b> into a bigger one.</p>
         </div>
         <div class="facts">
           <div class="fact panel reveal"><span class="n">1</span><div><h3>It lives in your bag</h3><p>Your crab works from your own wallet. It never takes custody of anything.</p></div></div>
-          <div class="fact panel reveal"><span class="n">2</span><div><h3>It walks sideways</h3><p>Chop, ranges, boring weeks: that's where a grid earns. Trends are for HODLers.</p></div></div>
-          <div class="fact panel reveal"><span class="n">3</span><div><h3>It molts when it wins</h3><p>Filled orders grow it from Hatchling to King Crab, and every molt unlocks more lines.</p></div></div>
+          <div class="fact panel reveal"><span class="n">2</span><div><h3>It trades stocks too</h3><p>NVDAx, AAPLx, GOOGLx, MSFTx: tokenized shares that follow the real price and trade on Solana 24/7.</p></div></div>
+          <div class="fact panel reveal"><span class="n">3</span><div><h3>It minds your portfolio</h3><p>The Stash counts every token you hold, splits stocks, crypto and cash, and says what it can put to work.</p></div></div>
+          <div class="fact panel reveal"><span class="n">4</span><div><h3>It molts when it wins</h3><p>Filled orders grow it from Hatchling to King Crab, and every molt unlocks more lines.</p></div></div>
         </div>
       </div>
       <div class="pic reveal"><span class="ring"></span><img src="/assets/img/crab-wave.png" alt="A grid crab waving from its red backpack"></div>
+    </div>
+  </section>
+
+  <section class="s" id="pit">
+    <div class="wrap">
+      <div class="head reveal"><span class="ey">The Pit</span><h2>Step inside the bag.</h2><p>Every pocket is a room. Hatch your crab in the Burrow, then watch it read the Tide Wall, string lines on the Line Rack, pin orders on the Reef Board, count your Stash and climb the Molt Den. Press <b>Run my scan</b> and it walks the rooms and writes you a log.</p></div>
+      <a class="pitcard panel reveal" href="/pit"><img src="/assets/img/pit.jpg" alt="Inside the bag: the Burrow, the Radio, the Tide Wall, the Line Rack, the Reef Board and the Molt Den" loading="lazy"><span class="btn lg red">Enter the Pit →</span></a>
+      <div class="rooms reveal">
+        <div><b>Burrow</b><span>Name it, pick a temper</span></div><div><b>Tide Wall</b><span>Live stocks and crypto</span></div><div><b>Line Rack</b><span>Your grid, backtested</span></div><div><b>Reef Board</b><span>Your Jupiter orders</span></div><div><b>Stash</b><span>Your whole portfolio</span></div><div><b>Radio</b><span>Talk to your crab</span></div><div><b>Molt Den</b><span>Five bags to grow into</span></div>
+      </div>
     </div>
   </section>
 
@@ -271,6 +290,8 @@
         <details><summary>What does it cost?</summary><div class="a">Jupiter charges 0.1% per filled limit order on most pairs, plus normal Solana network fees. Each order needs to be worth at least $5. GRID adds nothing on top.</div></details>
         <details><summary>Does my crab re-place orders after a fill?</summary><div class="a">Your keys stay in your wallet, so every new order needs your signature. When a line fills, the desk shows the matching order one line over and lets you re-arm it in one click. That keeps the grid running without handing anyone your keys.</div></details>
         <details><summary>How does my crab molt?</summary><div class="a">It counts filled limit orders on your connected wallet, read from Jupiter: 2 fills makes a Scuttler, 6 a Pincher, 16 a Shellback, 40 a King Crab. Each stage unlocks more lines per grid, from 6 up to 50.</div></details>
+        <details><summary>Can it trade stocks?</summary><div class="a">Yes, tokenized ones. xStocks like NVDAx, AAPLx, GOOGLx and MSFTx are Solana tokens that track a real share price, so your crab can grid them like any other token, day or night. They aren't the shares themselves, and they aren't offered everywhere (for example, not to US persons), so check before you buy.</div></details>
+        <details><summary>Does it manage my portfolio?</summary><div class="a">It watches it. The Stash reads every token in your connected wallet, prices it through Jupiter, splits it into stocks, crypto and cash, and suggests what your crab could grid. It's read-only: nothing moves unless you sign an order.</div></details>
         <details><summary>Is GRID part of Backpack or Jupiter?</summary><div class="a">No. GRID is an independent project. It works with the Backpack, Phantom and Solflare wallets and places orders through Jupiter's public API.</div></details>
         <details><summary>Is this financial advice?</summary><div class="a">No. Backtests replay the past, and the past doesn't promise anything. Crypto and tokenized stocks can drop fast. Only put in what you can afford to lose.</div></details>
       </div>

@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>GRID · The Pit</title>
+<meta name="description" content="Step inside the bag. Your grid crab lives in the Pit: it trades tokenized stocks and crypto, counts your whole portfolio, pins its fills and molts as it grows.">
+<meta name="theme-color" content="#0e0f13">
+<meta property="og:image" content="/assets/img/og.png">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="/assets/img/favicon-180.png">
+<link rel="preload" href="/assets/img/pit.jpg" as="image">
+<link rel="stylesheet" href="/assets/css/grid.css">
+<script>document.documentElement.classList.add('js')</script>
+<style>
+html,body{height:100%}
+body{overflow:hidden;background:#0b0c0f}
+.top{position:fixed;left:0;right:0;top:0;height:62px;z-index:40;display:flex;align-items:center;gap:12px;padding:0 16px;background:rgba(14,15,19,.86);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.top .sp{flex:1}
+.tick{display:flex;gap:6px;overflow:hidden;max-width:min(680px,46vw);mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);-webkit-mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent)}
+.tick .run{display:flex;gap:6px;animation:tick 50s linear infinite}
+.tick .chip{height:30px;font-size:12px}
+.wb .dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green)}
+.wrapw{position:fixed;left:0;right:0;top:62px;bottom:84px;overflow:hidden;background:linear-gradient(#0f0f17 50%,#161920 50%);display:flex;align-items:center;justify-content:center}
+.wrapw.scroll{overflow-x:auto;justify-content:flex-start;scrollbar-width:none}.wrapw.scroll::-webkit-scrollbar{display:none}
+.world{position:relative;flex:none;aspect-ratio:2400/1000;background:#0e0f13 url(/assets/img/pit.jpg) center/100% 100% no-repeat;}
+.sign{position:absolute;transform:translate(-50%,-100%);font:700 clamp(8px,.72vw,12px)/1 var(--mono);letter-spacing:1.2px;color:#fff;background:#0e0f13;border:1px solid #3a3d47;border-radius:7px;padding:6px 8px 5px;white-space:nowrap;pointer-events:none;text-transform:uppercase}
+.sign i{font-style:normal;color:var(--red2)}
+.hot{position:absolute;transform:translate(-50%,0);border:0;background:transparent;cursor:pointer;border-radius:16px;transition:background .2s}
+.hot:hover,.hot:focus-visible{background:rgba(255,255,255,.04);outline:1px dashed rgba(255,255,255,.18)}
+.screen{position:absolute;overflow:hidden;border-radius:4px}
+.screen canvas{width:100%;height:100%;display:block}
+.screen .lbl{position:absolute;left:3%;top:5%;font:700 clamp(8px,.75vw,13px)/1.2 var(--mono);color:#cfd3da;text-shadow:0 1px 0 #000}
+.screen .lbl b{color:#fff}
+.me{position:absolute;transform:translateX(-50%);transition-property:left;transition-timing-function:linear;z-index:5;pointer-events:none}
+.me img{height:100%;display:block;filter:drop-shadow(0 8px 10px rgba(0,0,0,.55))}
+.me.walk img{animation:scuttle .28s steps(2) infinite}
+@keyframes scuttle{50%{transform:translateY(-3%)}}
+.me .tag{position:absolute;left:50%;top:-4px;transform:translate(-50%,-100%);font:800 clamp(9px,.7vw,12px)/1 Inter;color:#fff;background:var(--red);border-radius:6px;padding:4px 7px;white-space:nowrap}
+.bub{position:absolute;left:50%;bottom:calc(100% + 26px);transform:translateX(-50%);min-width:160px;max-width:min(320px,70vw);background:#f2f3f6;color:#0e0f13;font:700 clamp(11px,.9vw,14px)/1.35 Inter;padding:10px 12px;border-radius:14px;box-shadow:0 14px 30px rgba(0,0,0,.4);text-align:center;animation:pop .25s cubic-bezier(.2,.9,.3,1.3)}
+.bub::after{content:"";position:absolute;left:50%;bottom:-7px;width:14px;height:14px;background:#f2f3f6;transform:translateX(-50%) rotate(45deg);border-radius:2px}
+.bub.think{background:#22242c;color:#e9ebef}.bub.think::after{background:#22242c}
+@keyframes pop{from{opacity:0;transform:translate(-50%,8px) scale(.9)}}
+.card{position:fixed;left:14px;top:76px;z-index:30;width:min(300px,calc(100vw - 28px));padding:12px 14px;display:grid;grid-template-columns:54px minmax(0,1fr);gap:12px;align-items:center;background:rgba(22,23,29,.92);backdrop-filter:blur(8px);border:1px solid var(--line2);border-radius:16px}
+.card img{width:54px}
+.card b{font:900 16px/1.1 var(--disp);display:block}
+.card .st{font:700 11px/1.3 var(--mono);color:var(--red2);margin:3px 0 6px}
+.card .xp{height:6px;background:#101116;border-radius:99px;overflow:hidden}.card .xp i{display:block;height:100%;background:linear-gradient(90deg,var(--red),var(--red2));width:0;transition:width .6s}
+.card .stt{grid-column:1/-1;display:flex;align-items:center;gap:8px;font:600 12.5px/1.3 Inter;color:var(--mute)}
+.card .stt .d{width:7px;height:7px;border-radius:50%;background:var(--green);flex:none}
+.dock{position:fixed;left:0;right:0;bottom:0;height:84px;z-index:30;display:flex;align-items:center;justify-content:center;gap:6px;padding:0 10px;background:rgba(14,15,19,.92);border-top:1px solid var(--line);overflow-x:auto;scrollbar-width:none}
+.dock::-webkit-scrollbar{display:none}
+.dock button,.dock a{flex:none;display:grid;justify-items:center;gap:5px;min-width:74px;height:62px;padding:8px 8px 6px;border-radius:14px;border:1px solid transparent;background:transparent;color:#c7cad1;font:700 11.5px/1 Inter;cursor:pointer;text-decoration:none}
+.dock button:hover,.dock a:hover{background:#1c1d24;border-color:var(--line2)}
+.dock svg{width:22px;height:22px}
+.dock .go{background:var(--red);color:#fff;min-width:118px}.dock .go:hover{background:#f0333c}
+.dock .sep{width:1px;height:40px;background:var(--line2);margin:0 4px;flex:none}
+.drawer{position:fixed;right:14px;top:76px;bottom:98px;z-index:35;width:min(420px,calc(100vw - 28px));background:var(--panel);border:1px solid var(--line2);border-radius:20px;box-shadow:0 30px 80px rgba(0,0,0,.55);display:flex;flex-direction:column;transform:translateX(calc(100% + 30px));transition:transform .3s cubic-bezier(.2,.8,.2,1)}
+.drawer.on{transform:none}
+.drawer header{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;padding:16px 16px 12px;border-bottom:1px solid var(--line)}
+.drawer h2{margin:0;font:900 22px/1.1 var(--disp)}
+.drawer header p{margin:4px 0 0;color:var(--mute);font-size:13px}
+.drawer .x{width:36px;height:36px;border-radius:10px;border:1px solid var(--line2);background:transparent;color:var(--mute);font-size:20px;cursor:pointer}
+.drawer .body{padding:16px;overflow:auto;display:flex;flex-direction:column;gap:14px;min-height:0}
+.drawer .body>*{flex:none}
+.temper{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.temper button{padding:12px 8px;border-radius:12px;border:1px solid var(--line2);background:#101116;cursor:pointer;display:grid;gap:4px;text-align:center}
+.temper button b{font:800 14px/1 Inter}.temper button span{font-size:11.5px;color:var(--mute);line-height:1.3}
+.temper button.on{border-color:#f2f3f6;background:#1c1d24}
+.log{background:#101116;border:1px solid var(--line);border-radius:14px;padding:14px;font-size:14.5px;line-height:1.6;color:#d9dce2;white-space:pre-wrap}
+.log small{display:block;color:var(--dim);font:600 11px/1 var(--mono);margin-top:10px}
+.chat{display:flex;flex-direction:column;gap:8px;max-height:46vh;overflow:auto}
+.msg2{flex:none;max-width:86%;padding:10px 12px;border-radius:14px;font-size:14px;line-height:1.5}
+.msg2.mine{align-self:flex-end;background:#f2f3f6;color:#0e0f13;border-bottom-right-radius:4px}
+.msg2.its{align-self:flex-start;background:#22242c;border-bottom-left-radius:4px}
+.ask{display:flex;gap:8px}
+.chips2{display:flex;gap:6px;flex-wrap:wrap}
+.chips2 button{height:34px;padding:0 12px 0 5px;display:inline-flex;align-items:center;gap:7px;border-radius:99px;border:1px solid var(--line2);background:#101116;font:700 12.5px/1 Inter;cursor:pointer;color:#c7cad1}
+.chips2 button img,.chips2 button .ph{width:22px;height:22px;border-radius:50%;background:#000;display:grid;place-items:center;font:800 8px/1 Inter;color:var(--mute)}
+.chips2 button.on{background:#f2f3f6;color:#0e0f13}
+.pos{height:10px;background:#101116;border:1px solid var(--line);border-radius:99px;position:relative}
+.pos i{position:absolute;top:50%;width:14px;height:14px;border-radius:50%;background:#f2f3f6;transform:translate(-50%,-50%);box-shadow:0 0 0 3px rgba(242,243,246,.2)}
+.pos::before{content:"";position:absolute;inset:0;border-radius:99px;background:linear-gradient(90deg,rgba(61,220,132,.35),rgba(255,255,255,.08) 50%,rgba(236,58,64,.35))}
+.posl{display:flex;justify-content:space-between;font:700 11.5px/1 var(--mono);color:var(--mute);margin-top:6px}
+.lad{display:grid;gap:8px}
+.lrung{display:grid;grid-template-columns:44px minmax(0,1fr) auto;gap:12px;align-items:center;padding:10px 12px;border-radius:12px;background:#101116;border:1px solid var(--line)}
+.lrung img{width:44px;opacity:.5}
+.lrung b{font:900 16px/1.1 var(--disp)}.lrung span{display:block;color:var(--mute);font-size:12px;margin-top:2px}
+.lrung em{font-style:normal;font:700 12px/1 var(--mono);color:var(--mute)}
+.lrung.done img,.lrung.here img{opacity:1}
+.lrung.here{border-color:var(--red);background:linear-gradient(90deg,rgba(236,58,64,.1),#101116)}
+.lrung.here em{color:var(--red2)}
+.olist{display:grid;gap:6px}
+.orow{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px;align-items:center;padding:10px;border-radius:12px;background:#111217;border:1px solid var(--line);font:600 12.5px/1.35 var(--mono)}
+.orow small{display:block;color:var(--dim)}
+.sd{font:800 10px/1 Inter;letter-spacing:.6px;text-transform:uppercase;padding:5px 7px;border-radius:6px}
+.sd.buy{background:var(--greenbg);color:var(--green)}.sd.sell{background:var(--redbg);color:var(--red2)}
+.intro{padding:16px;border-radius:16px;background:linear-gradient(135deg,rgba(236,58,64,.14),rgba(236,58,64,.02));border:1px solid rgba(236,58,64,.3);font-size:14px;line-height:1.6;color:#e2e4e9}
+.intro b{color:#fff}
+.split{display:flex;height:12px;border-radius:99px;overflow:hidden;gap:2px;background:#101116}
+.split i{display:block;min-width:3px}
+.splitl{display:flex;flex-wrap:wrap;gap:12px;font:700 11.5px/1 var(--mono);color:var(--mute);margin-top:8px}
+.splitl span{display:inline-flex;align-items:center;gap:6px}.splitl em{width:9px;height:9px;border-radius:3px}
+.hrow{display:grid;grid-template-columns:26px minmax(0,1fr) auto;gap:10px;align-items:center;padding:9px 10px;border-radius:12px;background:#111217;border:1px solid var(--line)}
+.hrow img,.hrow .ph{width:26px;height:26px;border-radius:50%;background:#000;display:grid;place-items:center;font:800 9px/1 Inter;color:var(--mute)}
+.hrow b{font:800 13.5px/1.2 Inter}.hrow small{display:block;color:var(--dim);font:600 11.5px/1.3 var(--mono)}
+.hrow .kt{margin-left:6px;font:800 9px/1 var(--mono);letter-spacing:.6px;color:var(--red2);background:var(--redbg);padding:3px 5px;border-radius:5px;vertical-align:2px}
+.hrow .r{display:grid;justify-items:end;gap:4px;font:700 13px/1 var(--mono)}
+.hrow .r button{height:24px;padding:0 9px;border-radius:7px;border:1px solid var(--line2);background:#1c1d24;font:700 11px/1 Inter;cursor:pointer;color:#e9ebef}
+@media (max-width:760px){
+  .top{height:56px}.tick{display:none}.wrapw{top:56px;bottom:76px}
+  .card{top:66px;left:10px;width:auto;right:auto;max-width:230px;grid-template-columns:40px minmax(0,1fr);padding:8px 10px;gap:8px}.card img{width:40px}.card .stt{display:none}
+  .dock{height:76px;justify-content:flex-start}.dock button,.dock a{min-width:64px;height:58px}.dock .sep{display:none}
+  .drawer{left:8px;right:8px;width:auto;top:auto;bottom:84px;max-height:72vh;transform:translateY(calc(100% + 100px))}
+  .drawer.on{transform:none}
+}
+</style>
+</head>
+<body>
+<div class="top">
+  <a class="logo" href="/"><img src="/assets/img/favicon-64.png" alt=""><b>GRID</b></a>
+  <div class="tick" aria-label="Live prices"><div class="run" id="run"></div></div>
+  <div class="sp"></div>
+  <a class="btn sm ghost" href="/desk">Desk</a>
+  <button class="btn sm white wb" id="walletBtn" type="button">Connect wallet</button>
+</div>
+
+<div class="wrapw" id="wrapw"><div class="world" id="world"></div></div>
+
+<div class="card" id="card">
+  <img src="/assets/img/crab-front.png" alt="">
+  <div><b id="cName">Your crab</b><div class="st" id="cStage">NOT HATCHED</div><div class="xp"><i id="cXp"></i></div></div>
+  <div class="stt"><span class="d" id="cDot"></span><span id="cStatus">Waiting in the burrow</span></div>
+</div>
+
+<nav class="dock" aria-label="Actions">
+  <button class="go" id="scanBtn" type="button"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 4v16l13-8z"/></svg>Run my scan</button>
+  <button data-go="radio" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M4 5h16v11H9l-5 4z"/></svg>Talk</button>
+  <span class="sep"></span>
+  <button data-go="burrow" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="4" y="7" width="16" height="13" rx="4"/><path d="M9 7V5a3 3 0 0 1 6 0v2"/><circle cx="12" cy="15" r="2.5"/></svg>Burrow</button>
+  <button data-go="tide" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M6 12l3-3 3 2 5-4M12 16v4M8 20h8"/></svg>Tide wall</button>
+  <button data-go="rack" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 3v18M20 3v18M4 7h16M4 12h16M4 17h16"/></svg>Line rack</button>
+  <button data-go="reef" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="3" y="4" width="18" height="14" rx="1"/><path d="M7 8h4M7 12h4M14 8h3v4h-3z"/></svg>Reef board</button>
+  <button data-go="stash" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M3 12h18"/><circle cx="12" cy="12" r="9"/></svg>Stash</button>
+  <button data-go="molt" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 20h4v-4h4v-4h4V8h4"/></svg>Molt den</button>
+  <a href="/desk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 4h6v6M20 4l-9 9M18 14v6H4V6h6"/></svg>The desk</a>
+</nav>
+
+<aside class="drawer" id="drawer" aria-hidden="true">
+  <header><div><h2 id="dTitle"></h2><p id="dSub"></p></div><button class="x" id="dClose" type="button" aria-label="Close">×</button></header>
+  <div class="body" id="dBody"></div>
+</aside>
+
+<script src="/assets/js/common.js"></script>
+<script src="/assets/js/engine.js"></script>
+<script src="/assets/js/chart.js"></script>
+<script src="/assets/js/wallet.js"></script>
+<script src="/assets/js/pit-map.js"></script>
+<script src="/assets/js/pit.js"></script>
+</body>
+</html>
